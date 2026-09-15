@@ -1,0 +1,32 @@
+# OS / editor
+.DS_Store
+Thumbs.db
+desktop.ini
+*.swp
+.idea/
+.vscode/
+
+# Secrets and credentials
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+credentials.json
+id_rsa
+id_rsa.pub
+
+# Dependencies and build
+node_modules/
+dist/
+.cache/
+*.log
+
+# Design-system internals that must not go to GitHub
+**/_archive/
+**/_original-preserved/
+
+# Duplicate archives of sources already in the repo
+*.zip
+*.Zip
+*.ZIP
