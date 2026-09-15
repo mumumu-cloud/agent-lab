@@ -8,14 +8,14 @@
     <link rel="stylesheet" href="/css/tokens.css" />
     <link rel="stylesheet" href="/css/app.css" />
     <script>
-      // Apply saved theme before paint to avoid a flash.
+      // Apply saved theme before paint (UROCK convention: `.dark` class on <html>).
       (function () {
         var saved = localStorage.getItem("theme");
         var prefersDark =
           window.matchMedia &&
           window.matchMedia("(prefers-color-scheme: dark)").matches;
         var theme = saved || (prefersDark ? "dark" : "light");
-        document.documentElement.setAttribute("data-theme", theme);
+        document.documentElement.classList.toggle("dark", theme === "dark");
       })();
     </script>
   </head>
@@ -23,9 +23,10 @@
     <main class="login">
       <section class="login__card">
         <div class="login__brand">
-          <span class="login__logo" aria-hidden="true"></span>
-          <h1 class="login__title">Asset Library</h1>
+          <img class="brand-logo brand-logo--light login__logo" src="/img/UROCK_navy.svg" alt="UROCK" />
+          <img class="brand-logo brand-logo--dark login__logo" src="/img/UROCK_white.svg" alt="UROCK" />
         </div>
+        <h1 class="login__title">Asset Library</h1>
         <p class="login__subtitle">
           사내 직원 전용 디자인 애셋 라이브러리입니다. 로그인 후 이용할 수 있습니다.
         </p>

@@ -14,7 +14,7 @@
           window.matchMedia &&
           window.matchMedia("(prefers-color-scheme: dark)").matches;
         var theme = saved || (prefersDark ? "dark" : "light");
-        document.documentElement.setAttribute("data-theme", theme);
+        document.documentElement.classList.toggle("dark", theme === "dark");
       })();
     </script>
   </head>
@@ -23,7 +23,8 @@
       <!-- Sidebar -->
       <aside class="sidebar" id="sidebar">
         <div class="sidebar__brand">
-          <span class="sidebar__logo" aria-hidden="true"></span>
+          <img class="brand-logo brand-logo--light sidebar__logo" src="/img/UROCK_navy.svg" alt="UROCK" />
+          <img class="brand-logo brand-logo--dark sidebar__logo" src="/img/UROCK_white.svg" alt="UROCK" />
           <span class="sidebar__brand-text">
             <span class="sidebar__brand-title">Asset Library</span>
             <span class="sidebar__brand-sub">사내 디자인 애셋</span>

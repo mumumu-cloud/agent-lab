@@ -135,6 +135,7 @@ app.get("/api/assets/:id/download", requireAuthApi, (req, res) => {
 
 app.use("/css", express.static(join(publicDir, "css")));
 app.use("/js", express.static(join(publicDir, "js")));
+app.use("/img", express.static(join(publicDir, "img")));
 
 // --- Gated pages -----------------------------------------------------------
 

@@ -355,14 +355,12 @@ el("view-list").addEventListener("click", () => {
 
 // Theme toggle
 function syncThemeIcon() {
-  const theme = document.documentElement.getAttribute("data-theme");
-  el("theme-icon").textContent = theme === "dark" ? "☀️" : "🌙";
+  const isDark = document.documentElement.classList.contains("dark");
+  el("theme-icon").textContent = isDark ? "☀️" : "🌙";
 }
 el("theme-toggle").addEventListener("click", () => {
-  const current = document.documentElement.getAttribute("data-theme");
-  const next = current === "dark" ? "light" : "dark";
-  document.documentElement.setAttribute("data-theme", next);
-  localStorage.setItem("theme", next);
+  const isDark = document.documentElement.classList.toggle("dark");
+  localStorage.setItem("theme", isDark ? "dark" : "light");
   syncThemeIcon();
 });
 syncThemeIcon();

@@ -73,11 +73,19 @@ npm run dev      # 개발 서버 실행(자동 재시작), http://localhost:3000
 npm test
 ```
 
-## 디자인 토큰 안내
+## 디자인 시스템
 
-`public/css/tokens.css` 는 색상·타이포·간격·라운드·그림자 등을 CSS 변수로 정의한
-완성형 기본 토큰 세트입니다. 별도로 전달 주시는 **실제 토큰 파일**이 있으면 이
-파일의 값만 교체하여 그대로 반영할 수 있도록 구성했습니다.
+이 앱의 스타일은 **UROCK Design System v1.4** 를 기준으로 합니다. 원본 번들은
+`claude-design-system-md v1.4/_claude-design-upload/` 에 있으며, 우선순위는
+`design.md` → `styles/globals.css` → `components/**` → `modules/**` 입니다.
+
+- `public/css/tokens.css` 는 위 `globals.css` 의 토큰 값을 그대로 미러링한 것입니다.
+  (색상·그림자·라운드·타이포 토큰 + 앱 시맨틱 브리지)
+- 테마 전환은 `<html>` 의 `.dark` 클래스로 처리합니다(디자인 시스템 컨벤션).
+- 기본 폰트는 Pretendard이며, 브랜드 로고는 `public/img/UROCK_*.svg` 를 사용합니다.
+
+향후 모든 UI 작업은 이 디자인 시스템과 토큰을 참조하여 제작합니다(자세한 규칙은
+`AGENTS.md` 참고).
 
 ## Cloud Agent 환경
 
