@@ -2,7 +2,7 @@
   "name": "agent-lab",
   "version": "0.1.0",
   "private": true,
-  "description": "A small starter lab for experimenting with agent-style request/response flows.",
+  "description": "Internal, login-gated design asset library (prototype) with an image-first gallery.",
   "author": "Y-12mu (https://github.com/Y-12mu)",
   "repository": {
     "type": "git",

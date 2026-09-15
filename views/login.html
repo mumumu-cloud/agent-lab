@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="ko" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>로그인 · 디자인 애셋 라이브러리</title>
+    <link rel="stylesheet" href="/css/tokens.css" />
+    <link rel="stylesheet" href="/css/app.css" />
+    <script>
+      // Apply saved theme before paint to avoid a flash.
+      (function () {
+        var saved = localStorage.getItem("theme");
+        var prefersDark =
+          window.matchMedia &&
+          window.matchMedia("(prefers-color-scheme: dark)").matches;
+        var theme = saved || (prefersDark ? "dark" : "light");
+        document.documentElement.setAttribute("data-theme", theme);
+      })();
+    </script>
+  </head>
+  <body>
+    <main class="login">
+      <section class="login__card">
+        <div class="login__brand">
+          <span class="login__logo" aria-hidden="true"></span>
+          <h1 class="login__title">Asset Library</h1>
+        </div>
+        <p class="login__subtitle">
+          사내 직원 전용 디자인 애셋 라이브러리입니다. 로그인 후 이용할 수 있습니다.
+        </p>
+
+        <form id="login-form" novalidate>
+          <div class="field">
+            <label class="field__label" for="username">아이디</label>
+            <input
+              class="field__input"
+              id="username"
+              name="username"
+              type="text"
+              autocomplete="username"
+              placeholder="아이디를 입력하세요"
+              required
+            />
+          </div>
+          <div class="field">
+            <label class="field__label" for="password">비밀번호</label>
+            <input
+              class="field__input"
+              id="password"
+              name="password"
+              type="password"
+              autocomplete="current-password"
+              placeholder="비밀번호를 입력하세요"
+              required
+            />
+          </div>
+          <p class="login__error" id="login-error" role="alert"></p>
+          <button class="button button--primary button--block" type="submit">
+            로그인
+          </button>
+        </form>
+
+        <div class="login__hint">
+          <strong>프로토타입 샘플 계정</strong> (권한별로 다르게 동작)
+          <br />보기: <code>viewer / viewer123</code>
+          <br />다운로드: <code>download / download123</code>
+          <br />관리자: <code>admin / admin123</code>
+        </div>
+      </section>
+    </main>
+    <script src="/js/login.js"></script>
+  </body>
+</html>
