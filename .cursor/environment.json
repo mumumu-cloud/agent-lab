@@ -1,10 +1,10 @@
 {
   "name": "agent-lab",
-  "install": "npm install",
+  "install": "cd asset-library && npm install",
   "terminals": [
     {
       "name": "dev-server",
-      "command": "npm run dev"
+      "command": "cd asset-library && npm run dev"
     }
   ]
 }

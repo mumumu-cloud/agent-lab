@@ -10,9 +10,14 @@
   Cloud Agent의 Secrets(환경 변수) 메커니즘으로만 다룬다.
 - `.env`, `.env.*` 파일은 커밋하지 않는다(`.gitignore`로 이미 제외됨).
 
+## 저장소 구조
+
+- `asset-library/` — 애플리케이션(사내 전용 디자인 애셋 라이브러리 프로토타입). 모든 앱 작업은 이 폴더에서 진행한다.
+- `claude-design-system-md v1.4/` — UROCK 디자인 시스템 참조 원본(수정 금지).
+
 ## 프로젝트 개요
 
-`agent-lab`은 사내 전용 디자인 애셋 라이브러리 프로토타입이다.
+`asset-library`는 사내 전용 디자인 애셋 라이브러리 프로토타입이다.
 Node.js + Express 백엔드와 HTML/CSS/JS 프런트엔드로 구성되며, 외부 API 키 없이 동작한다.
 
 ## 디자인 시스템 (필수 · 항상 참조)
@@ -26,7 +31,7 @@ Node.js + Express 백엔드와 HTML/CSS/JS 프런트엔드로 구성되며, 외�
   3. `_claude-design-upload/components/**`
   4. `_claude-design-upload/modules/**`
   - `design.md`에 없으면 `NOT FOUND`, 검증 안 됨이면 `NOT VERIFIED`로 취급하고 임의로 지어내지 않는다.
-- **토큰 참조**: 앱의 `public/css/tokens.css` 는 위 `globals.css` 의 토큰 값을 그대로 미러링한 것이다.
+- **토큰 참조**: 앱의 `asset-library/public/css/tokens.css` 는 위 `globals.css` 의 토큰 값을 그대로 미러링한 것이다.
   색상·그림자·라운드·타이포는 반드시 이 토큰(`--color-*`, `--shadow-*`, `--border-radius-*`, `--text-*`)을 사용하고, 임의의 하드코딩 색상값을 새로 만들지 않는다.
 - **테마**: 라이트는 `:root`, 다크는 `<html>` 의 `.dark` 클래스로 전환한다(디자인 시스템 컨벤션, next-themes 방식).
 - **폰트**: 기본 폰트는 Pretendard(`--font-pretendard`).
@@ -36,10 +41,11 @@ Node.js + Express 백엔드와 HTML/CSS/JS 프런트엔드로 구성되며, 외�
 ## 주요 명령어
 
 ```bash
-npm install      # 의존성 설치
-npm run dev      # 개발 서버 실행(자동 재시작), http://localhost:3000
-npm start        # 개발 서버 실행(감시 없음)
-npm test         # 유닛 테스트 실행
+cd asset-library   # 앱 폴더로 이동
+npm install        # 의존성 설치
+npm run dev        # 개발 서버 실행(자동 재시작), http://localhost:3000
+npm start          # 개발 서버 실행(감시 없음)
+npm test           # 유닛 테스트 실행
 ```
 
 ## 코드 규칙
