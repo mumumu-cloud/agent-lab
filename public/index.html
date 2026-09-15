@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Agent Lab</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="app">
+      <header class="app__header">
+        <h1 class="app__title">Agent Lab</h1>
+        <p class="app__subtitle">간단한 요청/응답 흐름을 실험해 보는 공간입니다.</p>
+        <span class="app__status" id="status" data-state="unknown">서버 확인 중…</span>
+      </header>
+
+      <section class="panel">
+        <form class="prompt" id="prompt-form">
+          <label class="prompt__label" for="prompt-input">프롬프트</label>
+          <textarea
+            class="prompt__input"
+            id="prompt-input"
+            name="prompt"
+            rows="3"
+            placeholder="예: 안녕하세요, Agent Lab!"
+          ></textarea>
+          <button class="prompt__button" type="submit">실행</button>
+        </form>
+
+        <div class="result" id="result" hidden>
+          <h2 class="result__title">응답</h2>
+          <p class="result__reply" id="result-reply"></p>
+          <dl class="result__meta" id="result-meta"></dl>
+        </div>
+      </section>
+    </main>
+
+    <script src="app.js"></script>
+  </body>
+</html>
