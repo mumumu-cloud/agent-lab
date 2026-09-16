@@ -66,40 +66,36 @@ function escapeHtml(s) {
   }[c]));
 }
 
-// Temporary placeholder photo (Lorem Picsum), seeded per asset for stability.
-function photoFor(asset) {
-  return `https://picsum.photos/seed/${encodeURIComponent(asset.id)}/400/300`;
-}
-
-// Self-contained SVG fallback used if the placeholder photo fails to load.
-function thumbFallback(asset) {
+// Self-contained, photo-like SVG thumbnail (no network needed — reliable on an
+// internal/closed network). Each asset gets a stylized "scene" over its colors.
+function thumbFor(asset) {
   const [c1, c2] = asset.colors || ["#6366f1", "#22d3ee"];
   const id = asset.id;
-  let shapes = "";
-  switch (asset.shape) {
-    case 1:
-      for (let y = 0; y < 4; y++)
-        for (let x = 0; x < 6; x++)
-          shapes += `<rect x="${x * 60}" y="${y * 60}" width="52" height="52" rx="8" fill="#fff" opacity="${0.08 + ((x + y) % 3) * 0.06}"/>`;
-      break;
-    case 2:
-      shapes = `<circle cx="180" cy="135" r="110" fill="none" stroke="#fff" stroke-width="10" opacity="0.18"/><circle cx="180" cy="135" r="72" fill="none" stroke="#fff" stroke-width="10" opacity="0.28"/><circle cx="180" cy="135" r="34" fill="#fff" opacity="0.4"/>`;
-      break;
-    case 3:
-      for (let i = -2; i < 10; i++)
-        shapes += `<rect x="${i * 44}" y="-40" width="20" height="360" fill="#fff" opacity="0.12" transform="rotate(20 180 135)"/>`;
-      break;
-    case 4:
-      for (let i = 0; i < 14; i++) {
-        const cx = ((i * 97) % 340) + 12;
-        const cy = ((i * 53) % 240) + 20;
-        shapes += `<circle cx="${cx}" cy="${cy}" r="${6 + (i % 4) * 5}" fill="#fff" opacity="0.16"/>`;
-      }
-      break;
-    default:
-      shapes = `<circle cx="110" cy="90" r="90" fill="#fff" opacity="0.16"/><circle cx="250" cy="180" r="120" fill="#fff" opacity="0.12"/>`;
+  const v = (asset.shape ?? 0) % 5;
+  let scene = "";
+  if (v === 0) {
+    scene = `<circle cx="288" cy="66" r="30" fill="#fff" opacity="0.9"/>
+      <path d="M0 205 Q90 160 180 200 T360 195 V270 H0Z" fill="#0b1020" opacity="0.20"/>
+      <path d="M0 235 Q120 190 240 225 T360 220 V270 H0Z" fill="#0b1020" opacity="0.33"/>`;
+  } else if (v === 1) {
+    scene = `<circle cx="80" cy="90" r="46" fill="#fff" opacity="0.14"/>
+      <circle cx="150" cy="150" r="26" fill="#fff" opacity="0.20"/>
+      <circle cx="250" cy="80" r="60" fill="#fff" opacity="0.12"/>
+      <circle cx="300" cy="180" r="34" fill="#fff" opacity="0.16"/>`;
+  } else if (v === 2) {
+    scene = `<polygon points="0,270 110,120 210,270" fill="#0b1020" opacity="0.22"/>
+      <polygon points="150,270 250,140 360,270" fill="#0b1020" opacity="0.30"/>
+      <circle cx="300" cy="70" r="26" fill="#fff" opacity="0.85"/>`;
+  } else if (v === 3) {
+    scene = `<path d="M0 150 Q90 120 180 150 T360 150 V270 H0Z" fill="#fff" opacity="0.10"/>
+      <path d="M0 190 Q90 160 180 190 T360 190 V270 H0Z" fill="#fff" opacity="0.12"/>
+      <path d="M0 230 Q90 200 180 230 T360 230 V270 H0Z" fill="#0b1020" opacity="0.18"/>`;
+  } else {
+    scene = `<circle cx="180" cy="135" r="96" fill="none" stroke="#fff" stroke-width="14" opacity="0.14"/>
+      <circle cx="180" cy="135" r="58" fill="none" stroke="#fff" stroke-width="14" opacity="0.20"/>
+      <circle cx="180" cy="135" r="24" fill="#fff" opacity="0.30"/>`;
   }
-  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="360" height="270" viewBox="0 0 360 270"><defs><linearGradient id="g${id}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${c1}"/><stop offset="1" stop-color="${c2}"/></linearGradient></defs><rect width="360" height="270" fill="url(#g${id})"/>${shapes}</svg>`;
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="360" height="270" viewBox="0 0 360 270"><defs><linearGradient id="g${id}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${c1}"/><stop offset="1" stop-color="${c2}"/></linearGradient><radialGradient id="v${id}" cx="50%" cy="42%" r="75%"><stop offset="58%" stop-color="#000" stop-opacity="0"/><stop offset="100%" stop-color="#000" stop-opacity="0.30"/></radialGradient></defs><rect width="360" height="270" fill="url(#g${id})"/>${scene}<rect width="360" height="270" fill="url(#v${id})"/></svg>`;
   return `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`;
 }
 
@@ -257,7 +253,7 @@ function renderAssets() {
 
     card.innerHTML =
       `<div class="asset-card__thumb">
-        <img class="asset-card__img" src="${photoFor(a)}" data-fallback="${thumbFallback(a)}" alt="${escapeHtml(a.fileName)} 미리보기" loading="lazy" onerror="this.onerror=null;this.src=this.dataset.fallback" />
+        <img class="asset-card__img" src="${thumbFor(a)}" alt="${escapeHtml(a.fileName)} 미리보기" loading="lazy" />
         <span class="asset-card__badge">${escapeHtml(extOf(a.fileName))}</span>
         <span class="asset-card__cat" style="background:${catColor(a.category)}">${escapeHtml(a.category)}</span>
       </div>
