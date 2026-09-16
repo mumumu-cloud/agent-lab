@@ -479,14 +479,15 @@ button {
   flex-shrink: 0;
 }
 
+/* Center text lives in the 42-unit SVG viewBox, so sizes are in user units. */
 .donut__center-value {
-  font-size: 26px;
+  font-size: 7px;
   font-weight: var(--font-weight-bold);
   fill: var(--color-text);
 }
 
 .donut__center-label {
-  font-size: 11px;
+  font-size: 3px;
   fill: var(--color-text-muted);
 }
 

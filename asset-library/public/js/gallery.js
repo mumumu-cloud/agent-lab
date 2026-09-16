@@ -234,16 +234,18 @@ function renderDonut() {
 
   const value = document.createElementNS(ns, "text");
   value.setAttribute("x", "21");
-  value.setAttribute("y", "20.5");
+  value.setAttribute("y", "20");
   value.setAttribute("text-anchor", "middle");
+  value.setAttribute("dominant-baseline", "central");
   value.setAttribute("class", "donut__center-value");
   value.textContent = String(total);
   svg.appendChild(value);
 
   const label = document.createElementNS(ns, "text");
   label.setAttribute("x", "21");
-  label.setAttribute("y", "26");
+  label.setAttribute("y", "25");
   label.setAttribute("text-anchor", "middle");
+  label.setAttribute("dominant-baseline", "central");
   label.setAttribute("class", "donut__center-label");
   label.textContent = "작업물";
   svg.appendChild(label);
