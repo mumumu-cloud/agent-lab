@@ -447,7 +447,7 @@ button {
 
 .overview {
   display: grid;
-  grid-template-columns: minmax(260px, 320px) 1fr;
+  grid-template-columns: 1fr 1fr;
   gap: var(--space-4);
   margin-bottom: var(--space-5);
 }
