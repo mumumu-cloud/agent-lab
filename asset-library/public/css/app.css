@@ -473,22 +473,42 @@ button {
   flex-wrap: wrap;
 }
 
-.donut__chart {
+.donut__chart-wrap {
+  position: relative;
   width: 176px;
   height: 176px;
   flex-shrink: 0;
 }
 
-/* Center text lives in the 42-unit SVG viewBox, so sizes are in user units. */
+.donut__chart {
+  width: 176px;
+  height: 176px;
+  display: block;
+}
+
+/* Center text is an HTML overlay (reliable px sizing, unlike SVG text). */
+.donut__center {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  text-align: center;
+}
+
 .donut__center-value {
-  font-size: 7px;
+  font-size: 26px;
   font-weight: var(--font-weight-bold);
-  fill: var(--color-text);
+  color: var(--color-text);
+  line-height: 1.1;
 }
 
 .donut__center-label {
-  font-size: 3px;
-  fill: var(--color-text-muted);
+  font-size: 12px;
+  color: var(--color-text-muted);
+  margin-top: 2px;
 }
 
 .donut__legend {

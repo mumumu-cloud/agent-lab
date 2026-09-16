@@ -232,23 +232,11 @@ function renderDonut() {
     offset -= pct;
   }
 
-  const value = document.createElementNS(ns, "text");
-  value.setAttribute("x", "21");
-  value.setAttribute("y", "20");
-  value.setAttribute("text-anchor", "middle");
-  value.setAttribute("dominant-baseline", "central");
-  value.setAttribute("class", "donut__center-value");
+  // Center text is an HTML overlay for reliable sizing.
+  const value = el("donut-value");
+  const label = el("donut-label");
   value.textContent = String(total);
-  svg.appendChild(value);
-
-  const label = document.createElementNS(ns, "text");
-  label.setAttribute("x", "21");
-  label.setAttribute("y", "25");
-  label.setAttribute("text-anchor", "middle");
-  label.setAttribute("dominant-baseline", "central");
-  label.setAttribute("class", "donut__center-label");
   label.textContent = "작업물";
-  svg.appendChild(label);
 
   // Hit areas on top so hovering any slice (even tiny ones) is reliable.
   for (const hit of hitAreas) svg.appendChild(hit);

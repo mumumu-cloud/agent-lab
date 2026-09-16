@@ -79,13 +79,19 @@
           <div class="card-panel">
             <h2 class="card-panel__title">카테고리별 작업물 비율</h2>
             <div class="donut">
-              <svg
-                class="donut__chart"
-                id="donut-chart"
-                viewBox="0 0 42 42"
-                role="img"
-                aria-label="카테고리별 작업물 비율 원형 그래프"
-              ></svg>
+              <div class="donut__chart-wrap">
+                <svg
+                  class="donut__chart"
+                  id="donut-chart"
+                  viewBox="0 0 42 42"
+                  role="img"
+                  aria-label="카테고리별 작업물 비율 원형 그래프"
+                ></svg>
+                <div class="donut__center" aria-hidden="true">
+                  <span class="donut__center-value" id="donut-value">–</span>
+                  <span class="donut__center-label" id="donut-label">작업물</span>
+                </div>
+              </div>
               <ul class="donut__legend" id="donut-legend"></ul>
             </div>
           </div>
