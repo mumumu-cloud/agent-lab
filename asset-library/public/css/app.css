@@ -474,8 +474,8 @@ button {
 }
 
 .donut__chart {
-  width: 160px;
-  height: 160px;
+  width: 176px;
+  height: 176px;
   flex-shrink: 0;
 }
 
@@ -505,6 +505,15 @@ button {
   align-items: center;
   gap: var(--space-2);
   font-size: var(--font-size-sm);
+  padding: 3px 6px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: background var(--transition-fast);
+}
+
+.donut__legend-item:hover,
+.donut__legend-item.is-active {
+  background: var(--color-surface-2);
 }
 
 .donut__legend-dot {
@@ -519,8 +528,31 @@ button {
 }
 
 .donut__legend-count {
-  color: var(--color-text-muted);
+  color: var(--color-text);
+  font-weight: var(--font-weight-semibold);
   font-variant-numeric: tabular-nums;
+}
+
+/* Floating tooltip for the donut chart (segments + legend) */
+.chart-tooltip {
+  position: fixed;
+  z-index: 80;
+  pointer-events: none;
+  transform: translate(-50%, calc(-100% - 10px));
+  background: var(--color-text);
+  color: var(--color-bg);
+  padding: 6px 10px;
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+  white-space: nowrap;
+  box-shadow: var(--shadow-md);
+  opacity: 0;
+  transition: opacity 0.1s ease;
+}
+
+.chart-tooltip.is-visible {
+  opacity: 1;
 }
 
 .summary {

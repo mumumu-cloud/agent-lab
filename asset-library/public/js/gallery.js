@@ -116,6 +116,27 @@ function showToast(message) {
   showToast._t = setTimeout(() => t.classList.remove("is-visible"), 2200);
 }
 
+// Floating tooltip used by the donut chart (segments + legend).
+let _chartTooltip;
+function chartTooltip() {
+  if (!_chartTooltip) {
+    _chartTooltip = document.createElement("div");
+    _chartTooltip.className = "chart-tooltip";
+    document.body.appendChild(_chartTooltip);
+  }
+  return _chartTooltip;
+}
+function showTooltip(text, x, y) {
+  const t = chartTooltip();
+  t.textContent = text;
+  t.style.left = `${x}px`;
+  t.style.top = `${y}px`;
+  t.classList.add("is-visible");
+}
+function hideTooltip() {
+  if (_chartTooltip) _chartTooltip.classList.remove("is-visible");
+}
+
 // ---------------------------------------------------------------- rendering
 
 function renderCategories() {
@@ -150,36 +171,53 @@ function renderDonut() {
   svg.replaceChildren();
 
   const ns = "http://www.w3.org/2000/svg";
+  const R = 15.915;
+  const STROKE = 4.5;
+  const GAP = 1.4; // small gap between segments for a clean, separated look
+
   const bg = document.createElementNS(ns, "circle");
   bg.setAttribute("cx", "21");
   bg.setAttribute("cy", "21");
-  bg.setAttribute("r", "15.915");
+  bg.setAttribute("r", String(R));
   bg.setAttribute("fill", "none");
   bg.setAttribute("stroke", "var(--color-surface-2)");
-  bg.setAttribute("stroke-width", "5");
+  bg.setAttribute("stroke-width", String(STROKE));
   svg.appendChild(bg);
 
-  let offset = 25;
+  const segByCat = {};
+  let offset = 25; // start at 12 o'clock
   for (const c of real) {
     if (!c.count) continue;
     const pct = (c.count / total) * 100;
+    const dash = Math.max(pct - GAP, 0.5); // leave a gap; keep tiny slices visible
     const seg = document.createElementNS(ns, "circle");
     seg.setAttribute("cx", "21");
     seg.setAttribute("cy", "21");
-    seg.setAttribute("r", "15.915");
+    seg.setAttribute("r", String(R));
     seg.setAttribute("fill", "none");
     seg.setAttribute("stroke", catColor(c.id));
-    seg.setAttribute("stroke-width", "5");
-    seg.setAttribute("stroke-dasharray", `${pct} ${100 - pct}`);
+    seg.setAttribute("stroke-width", String(STROKE));
+    seg.setAttribute("stroke-linecap", "round");
+    seg.setAttribute("stroke-dasharray", `${dash} ${100 - dash}`);
     seg.setAttribute("stroke-dashoffset", String(offset));
-    seg.style.transition = "stroke-dasharray .4s ease";
+    seg.style.cursor = "pointer";
+    seg.style.transition = "stroke-width .15s ease, opacity .15s ease";
+    seg.addEventListener("mouseenter", () => setActive(c.id));
+    seg.addEventListener("mousemove", (e) =>
+      showTooltip(`${c.label} · ${c.count}건 · ${Math.round(pct)}%`, e.clientX, e.clientY),
+    );
+    seg.addEventListener("mouseleave", () => {
+      setActive(null);
+      hideTooltip();
+    });
     svg.appendChild(seg);
+    segByCat[c.id] = { seg, pct };
     offset -= pct;
   }
 
   const value = document.createElementNS(ns, "text");
   value.setAttribute("x", "21");
-  value.setAttribute("y", "20");
+  value.setAttribute("y", "20.5");
   value.setAttribute("text-anchor", "middle");
   value.setAttribute("class", "donut__center-value");
   value.textContent = String(total);
@@ -195,6 +233,7 @@ function renderDonut() {
 
   const legend = el("donut-legend");
   legend.replaceChildren();
+  const liByCat = {};
   for (const c of real) {
     const li = document.createElement("li");
     li.className = "donut__legend-item";
@@ -202,8 +241,35 @@ function renderDonut() {
     li.innerHTML =
       `<span class="donut__legend-dot" style="background:${catColor(c.id)}"></span>` +
       `<span class="donut__legend-label">${escapeHtml(c.label)}</span>` +
-      `<span class="donut__legend-count">${c.count} (${pct}%)</span>`;
+      `<span class="donut__legend-count">${pct}%</span>`;
+    li.addEventListener("mouseenter", () => setActive(c.id));
+    li.addEventListener("mousemove", (e) =>
+      showTooltip(`${c.label} · ${c.count}건 · ${pct}%`, e.clientX, e.clientY),
+    );
+    li.addEventListener("mouseleave", () => {
+      setActive(null);
+      hideTooltip();
+    });
     legend.appendChild(li);
+    liByCat[c.id] = li;
+  }
+
+  // Emphasize one category (segment + legend) and show its % in the center.
+  function setActive(id) {
+    for (const [cid, { seg }] of Object.entries(segByCat)) {
+      seg.setAttribute("stroke-width", cid === id ? String(STROKE + 1.5) : String(STROKE));
+      seg.style.opacity = id === null || cid === id ? "1" : "0.28";
+    }
+    for (const [cid, li] of Object.entries(liByCat)) {
+      li.classList.toggle("is-active", cid === id);
+    }
+    if (id && segByCat[id]) {
+      value.textContent = `${Math.round(segByCat[id].pct)}%`;
+      label.textContent = state.categories.find((c) => c.id === id)?.label || "";
+    } else {
+      value.textContent = String(total);
+      label.textContent = "작업물";
+    }
   }
 }
 
