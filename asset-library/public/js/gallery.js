@@ -14,6 +14,7 @@ const state = {
   categories: [],
   colors: {},
   assets: [],
+  donutMetric: "count", // "count" (N건) or "percent" (X%)
 };
 
 // Client-side prototype edits (admin). Sample data is embedded; edits/deletes
@@ -248,10 +249,11 @@ function renderDonut() {
     const li = document.createElement("li");
     li.className = "donut__legend-item";
     const pct = total ? Math.round((c.count / total) * 100) : 0;
+    const metricText = state.donutMetric === "percent" ? `${pct}%` : `${c.count}건`;
     li.innerHTML =
       `<span class="donut__legend-dot" style="background:${catColor(c.id)}"></span>` +
       `<span class="donut__legend-label">${escapeHtml(c.label)}</span>` +
-      `<span class="donut__legend-count">${c.count}건</span>`;
+      `<span class="donut__legend-count">${metricText}</span>`;
     li.addEventListener("mouseenter", () => setActive(c.id));
     li.addEventListener("mousemove", (e) =>
       showTooltip(`${c.label} · ${pct}%`, e.clientX, e.clientY),
@@ -409,6 +411,17 @@ el("sort-select").addEventListener("change", (e) => {
 el("order-select").addEventListener("change", (e) => {
   state.order = e.target.value;
   loadAssets();
+});
+
+// Donut legend metric toggle (갯수 / %)
+document.querySelectorAll("#donut-metric .segmented__btn").forEach((btn) => {
+  btn.addEventListener("click", () => {
+    state.donutMetric = btn.dataset.metric;
+    document
+      .querySelectorAll("#donut-metric .segmented__btn")
+      .forEach((b) => b.classList.toggle("is-active", b === btn));
+    renderDonut();
+  });
 });
 
 el("view-grid").addEventListener("click", () => {

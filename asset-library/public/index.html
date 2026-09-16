@@ -77,7 +77,13 @@
         <!-- Overview: donut + summary -->
         <section class="overview">
           <div class="card-panel">
-            <h2 class="card-panel__title">카테고리별 작업물 비율</h2>
+            <div class="card-panel__head">
+              <h2 class="card-panel__title">카테고리별 작업물 비율</h2>
+              <div class="segmented" id="donut-metric" role="group" aria-label="범례 표기 방식">
+                <button class="segmented__btn is-active" type="button" data-metric="count">갯수</button>
+                <button class="segmented__btn" type="button" data-metric="percent">%</button>
+              </div>
+            </div>
             <div class="donut">
               <div class="donut__chart-wrap">
                 <svg

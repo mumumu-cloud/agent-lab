@@ -466,6 +466,48 @@ button {
   font-weight: var(--font-weight-bold);
 }
 
+.card-panel__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  margin-bottom: var(--space-4);
+}
+
+.card-panel__head .card-panel__title {
+  margin: 0;
+}
+
+/* Segmented control (metric toggle) */
+.segmented {
+  display: inline-flex;
+  padding: 2px;
+  background: var(--color-surface-2);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-pill);
+}
+
+.segmented__btn {
+  border: none;
+  background: transparent;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+  padding: 4px 12px;
+  border-radius: var(--radius-pill);
+  cursor: pointer;
+  transition: background var(--transition-fast), color var(--transition-fast);
+}
+
+.segmented__btn:hover {
+  color: var(--color-text);
+}
+
+.segmented__btn.is-active {
+  background: var(--color-primary);
+  color: var(--color-on-primary);
+}
+
 .donut {
   display: flex;
   align-items: center;
