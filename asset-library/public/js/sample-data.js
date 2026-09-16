@@ -1,7 +1,10 @@
 /**
- * Sample design-asset catalog for the prototype. All entries are fake sample
- * data; there are no real files behind them. Thumbnails are generated on the
- * client from the `colors`/`shape` fields, so no binary assets are shipped.
+ * Client-side sample data + helpers for the design asset library prototype.
+ *
+ * This module is the single source of truth for the (static) prototype: it is
+ * imported by the browser (login.js, gallery.js) and by the Node test runner.
+ * It has NO Node/browser-only dependencies, so it works in both. All data is
+ * fake sample data — there are no real files or real credentials here.
  */
 
 export const CATEGORIES = [
@@ -15,19 +18,30 @@ export const CATEGORIES = [
   { id: "기타", label: "기타", description: "기타 작업물" },
 ];
 
-/**
- * Category id -> accent color, used for chips and the donut chart.
- * Values are drawn from the UROCK Design System palette (globals.css).
- */
+/** Category id -> accent color (UROCK Design System palette). */
 export const CATEGORY_COLORS = {
-  DFAS: "#628cf5", // primary-01
-  MCQ: "#8246af", // text-07-tertiary
-  GM: "#ffc60a", // state-warning
-  Homepage: "#11bcc7", // secondary-03
-  인쇄물: "#4663ae", // blue-09
-  콘텐츠: "#ee4c54", // text-error
-  기타: "#93b0f8", // secondary-01
+  DFAS: "#628cf5",
+  MCQ: "#8246af",
+  GM: "#ffc60a",
+  Homepage: "#11bcc7",
+  인쇄물: "#4663ae",
+  콘텐츠: "#ee4c54",
+  기타: "#93b0f8",
 };
+
+/** Permission matrix for the three access levels. */
+export const PERMISSIONS = {
+  viewer: { view: true, download: false, edit: false, label: "보기" },
+  downloader: { view: true, download: true, edit: false, label: "다운로드" },
+  admin: { view: true, download: true, edit: true, label: "관리자" },
+};
+
+/** Sample-only accounts (fake demo credentials, not real secrets). */
+export const USERS = [
+  { id: "u_viewer", username: "viewer", password: "viewer123", name: "김보기", team: "브랜드디자인팀", role: "viewer" },
+  { id: "u_download", username: "download", password: "download123", name: "이다운", team: "콘텐츠제작팀", role: "downloader" },
+  { id: "u_admin", username: "admin", password: "admin123", name: "박관리", team: "디자인애셋운영", role: "admin" },
+];
 
 function makeAsset(i, fileName, project, category, sizeBytes, createdAt, colors, shape, dims) {
   return {
@@ -82,7 +96,6 @@ export function fileExtension(fileName) {
   return idx > -1 ? fileName.slice(idx + 1).toLowerCase() : "";
 }
 
-/** Filter, search, and sort the catalog. */
 export function queryAssets({ search = "", category = "ALL", sort = "date", order = "desc" } = {}) {
   const term = String(search).trim().toLowerCase();
   let list = ASSETS.slice();
@@ -110,7 +123,6 @@ export function queryAssets({ search = "", category = "ALL", sort = "date", orde
   return list;
 }
 
-/** Counts per real category (excludes the ALL meta-category). */
 export function categoryCounts() {
   const counts = {};
   for (const c of CATEGORIES) {
@@ -121,4 +133,35 @@ export function categoryCounts() {
     if (a.category in counts) counts[a.category] += 1;
   }
   return counts;
+}
+
+export function categoriesWithCounts() {
+  const counts = categoryCounts();
+  return CATEGORIES.map((c) => ({
+    ...c,
+    color: CATEGORY_COLORS[c.id] || null,
+    count: c.id === "ALL" ? ASSETS.length : counts[c.id] || 0,
+  }));
+}
+
+export function getPermissions(role) {
+  return PERMISSIONS[role] || PERMISSIONS.viewer;
+}
+
+export function authenticate(username, password) {
+  const user = USERS.find(
+    (u) => u.username === String(username).trim() && u.password === password,
+  );
+  return user || null;
+}
+
+export function publicUser(user) {
+  return {
+    id: user.id,
+    username: user.username,
+    name: user.name,
+    team: user.team,
+    role: user.role,
+    permissions: getPermissions(user.role),
+  };
 }
