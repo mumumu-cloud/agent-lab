@@ -185,11 +185,13 @@ function renderDonut() {
   svg.appendChild(bg);
 
   const segByCat = {};
+  const hitAreas = [];
   let offset = 25; // start at 12 o'clock
   for (const c of real) {
     if (!c.count) continue;
     const pct = (c.count / total) * 100;
     const dash = Math.max(pct - GAP, 0.5); // leave a gap; keep tiny slices visible
+
     const seg = document.createElementNS(ns, "circle");
     seg.setAttribute("cx", "21");
     seg.setAttribute("cy", "21");
@@ -200,18 +202,33 @@ function renderDonut() {
     seg.setAttribute("stroke-linecap", "round");
     seg.setAttribute("stroke-dasharray", `${dash} ${100 - dash}`);
     seg.setAttribute("stroke-dashoffset", String(offset));
-    seg.style.cursor = "pointer";
     seg.style.transition = "stroke-width .15s ease, opacity .15s ease";
-    seg.addEventListener("mouseenter", () => setActive(c.id));
-    seg.addEventListener("mousemove", (e) =>
+    seg.style.pointerEvents = "none";
+    svg.appendChild(seg);
+    segByCat[c.id] = { seg, pct };
+
+    // Wider transparent hit area so even thin slices are easy to hover.
+    const hit = document.createElementNS(ns, "circle");
+    hit.setAttribute("cx", "21");
+    hit.setAttribute("cy", "21");
+    hit.setAttribute("r", String(R));
+    hit.setAttribute("fill", "none");
+    hit.setAttribute("stroke", "transparent");
+    hit.setAttribute("stroke-width", "9");
+    hit.setAttribute("stroke-dasharray", `${dash} ${100 - dash}`);
+    hit.setAttribute("stroke-dashoffset", String(offset));
+    hit.setAttribute("pointer-events", "stroke");
+    hit.style.cursor = "pointer";
+    hit.addEventListener("mouseenter", () => setActive(c.id));
+    hit.addEventListener("mousemove", (e) =>
       showTooltip(`${c.label} · ${c.count}건 · ${Math.round(pct)}%`, e.clientX, e.clientY),
     );
-    seg.addEventListener("mouseleave", () => {
+    hit.addEventListener("mouseleave", () => {
       setActive(null);
       hideTooltip();
     });
-    svg.appendChild(seg);
-    segByCat[c.id] = { seg, pct };
+    hitAreas.push(hit);
+
     offset -= pct;
   }
 
@@ -230,6 +247,9 @@ function renderDonut() {
   label.setAttribute("class", "donut__center-label");
   label.textContent = "작업물";
   svg.appendChild(label);
+
+  // Hit areas on top so hovering any slice (even tiny ones) is reliable.
+  for (const hit of hitAreas) svg.appendChild(hit);
 
   const legend = el("donut-legend");
   legend.replaceChildren();
