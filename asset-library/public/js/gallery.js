@@ -221,7 +221,7 @@ function renderDonut() {
     hit.style.cursor = "pointer";
     hit.addEventListener("mouseenter", () => setActive(c.id));
     hit.addEventListener("mousemove", (e) =>
-      showTooltip(`${c.label} · ${c.count}건 · ${Math.round(pct)}%`, e.clientX, e.clientY),
+      showTooltip(`${c.label} · ${Math.round(pct)}%`, e.clientX, e.clientY),
     );
     hit.addEventListener("mouseleave", () => {
       setActive(null);
@@ -251,10 +251,10 @@ function renderDonut() {
     li.innerHTML =
       `<span class="donut__legend-dot" style="background:${catColor(c.id)}"></span>` +
       `<span class="donut__legend-label">${escapeHtml(c.label)}</span>` +
-      `<span class="donut__legend-count">${pct}%</span>`;
+      `<span class="donut__legend-count">${c.count}건</span>`;
     li.addEventListener("mouseenter", () => setActive(c.id));
     li.addEventListener("mousemove", (e) =>
-      showTooltip(`${c.label} · ${c.count}건 · ${pct}%`, e.clientX, e.clientY),
+      showTooltip(`${c.label} · ${pct}%`, e.clientX, e.clientY),
     );
     li.addEventListener("mouseleave", () => {
       setActive(null);
