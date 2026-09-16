@@ -38,7 +38,17 @@ export const PERMISSIONS = {
   admin: { view: true, download: true, edit: true, label: "관리자" },
 };
 
-const sessions = new Map();
+/**
+ * Stateless, signed-cookie sessions so auth works on serverless platforms
+ * (e.g. Netlify Functions) where in-memory state is not shared across
+ * invocations. The token is `<userId>.<HMAC(userId)>`. For this prototype a
+ * safe default secret is used; set SESSION_SECRET to override in deployment.
+ */
+const SECRET = process.env.SESSION_SECRET || "agent-lab-prototype-secret";
+
+function sign(value) {
+  return crypto.createHmac("sha256", SECRET).update(value).digest("base64url");
+}
 
 export function authenticate(username, password) {
   const user = users.find(
@@ -48,19 +58,24 @@ export function authenticate(username, password) {
 }
 
 export function createSession(userId) {
-  const token = crypto.randomBytes(24).toString("hex");
-  sessions.set(token, userId);
-  return token;
+  return `${userId}.${sign(userId)}`;
 }
 
-export function destroySession(token) {
-  sessions.delete(token);
+export function destroySession() {
+  // Stateless: invalidation happens by clearing the cookie on the client.
 }
 
 export function getUserByToken(token) {
-  if (!token) return null;
-  const userId = sessions.get(token);
-  if (!userId) return null;
+  if (!token || typeof token !== "string") return null;
+  const idx = token.lastIndexOf(".");
+  if (idx <= 0) return null;
+  const userId = token.slice(0, idx);
+  const signature = token.slice(idx + 1);
+  const expected = sign(userId);
+  if (signature.length !== expected.length) return null;
+  if (!crypto.timingSafeEqual(Buffer.from(signature), Buffer.from(expected))) {
+    return null;
+  }
   return users.find((u) => u.id === userId) || null;
 }
 

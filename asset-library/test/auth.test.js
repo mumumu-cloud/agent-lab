@@ -19,12 +19,22 @@ test("authenticate rejects wrong password", () => {
   assert.equal(authenticate("admin", "nope"), null);
 });
 
-test("sessions resolve to a user and can be destroyed", () => {
+test("a signed session token resolves back to its user", () => {
   const user = authenticate("viewer", "viewer123");
   const token = createSession(user.id);
   assert.equal(getUserByToken(token).id, user.id);
+});
+
+test("tampered or invalid tokens are rejected", () => {
+  const user = authenticate("viewer", "viewer123");
+  const token = createSession(user.id);
+  assert.equal(getUserByToken(token + "x"), null);
+  assert.equal(getUserByToken("u_admin.forged"), null);
+  assert.equal(getUserByToken("garbage"), null);
+  assert.equal(getUserByToken(""), null);
+  assert.equal(getUserByToken(null), null);
+  // destroySession is a no-op in the stateless model and must not throw.
   destroySession(token);
-  assert.equal(getUserByToken(token), null);
 });
 
 test("permission matrix escalates by role", () => {

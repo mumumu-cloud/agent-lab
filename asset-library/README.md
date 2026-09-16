@@ -87,6 +87,23 @@ npm test
 향후 모든 UI 작업은 이 디자인 시스템과 토큰을 참조하여 제작합니다(자세한 규칙은
 `AGENTS.md` 참고).
 
+## Netlify 배포
+
+이 프로토타입은 Netlify에서 실제로 동작하도록 구성되어 있습니다(저장소 루트의 `netlify.toml`).
+
+- 프런트엔드(`public/`)는 정적 파일로 서빙됩니다.
+- Express API는 서버리스 함수(`netlify/functions/api.js`, `serverless-http`)로 실행되며, `/api/*` 요청이 이 함수로 라우팅됩니다.
+- 인증은 서버리스 환경에서도 동작하도록 **서명된 쿠키(stateless)** 방식을 사용합니다.
+
+### 배포 설정
+
+- Base directory: `asset-library`
+- Publish directory: `asset-library/public`
+- Functions directory: `asset-library/netlify/functions`
+- (선택) 환경변수 `SESSION_SECRET` 를 설정하면 쿠키 서명 키를 교체할 수 있습니다. 미설정 시 프로토타입용 기본값을 사용합니다.
+
+위 값은 `netlify.toml` 에 이미 정의되어 있어, Netlify에서 저장소를 연결하고 배포 브랜치를 지정하면 됩니다.
+
 ## Cloud Agent 환경
 
 `.cursor/environment.json` 이 `npm install` 로 의존성을 설치하고, 영구 터미널

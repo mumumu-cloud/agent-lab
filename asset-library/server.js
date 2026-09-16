@@ -17,7 +17,6 @@ import {
 } from "./lib/assets.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const viewsDir = join(__dirname, "views");
 const publicDir = join(__dirname, "public");
 
 const app = express();
@@ -41,6 +40,11 @@ function sessionFromReq(req) {
   return user ? { user, token } : null;
 }
 
+function cookie(name, value, maxAge, req) {
+  const secure = req.headers["x-forwarded-proto"] === "https" ? "; Secure" : "";
+  return `${name}=${value}; HttpOnly; Path=/; SameSite=Lax; Max-Age=${maxAge}${secure}`;
+}
+
 // --- Public routes ---------------------------------------------------------
 
 app.get("/api/health", (_req, res) => {
@@ -56,17 +60,14 @@ app.post("/api/login", (req, res) => {
     return;
   }
   const token = createSession(user.id);
-  res.setHeader(
-    "Set-Cookie",
-    `sid=${token}; HttpOnly; Path=/; SameSite=Lax; Max-Age=86400`,
-  );
+  res.setHeader("Set-Cookie", cookie("sid", token, 86400, req));
   res.json({ user: publicUser(user) });
 });
 
 app.post("/api/logout", (req, res) => {
   const session = sessionFromReq(req);
   if (session) destroySession(session.token);
-  res.setHeader("Set-Cookie", "sid=; HttpOnly; Path=/; SameSite=Lax; Max-Age=0");
+  res.setHeader("Set-Cookie", cookie("sid", "", 0, req));
   res.json({ ok: true });
 });
 
@@ -144,7 +145,7 @@ app.get("/login", (req, res) => {
     res.redirect("/");
     return;
   }
-  res.sendFile(join(viewsDir, "login.html"));
+  res.sendFile(join(publicDir, "login.html"));
 });
 
 app.get(["/", "/index.html"], (req, res) => {
@@ -152,7 +153,7 @@ app.get(["/", "/index.html"], (req, res) => {
     res.redirect("/login");
     return;
   }
-  res.sendFile(join(viewsDir, "index.html"));
+  res.sendFile(join(publicDir, "index.html"));
 });
 
 const port = Number(process.env.PORT) || 3000;

@@ -1,0 +1,23 @@
+# Netlify configuration for the agent-lab design asset library prototype.
+# The app lives in asset-library/. The frontend (public/) is served as static
+# files; the Express API runs as a serverless function (netlify/functions/api.js).
+
+[build]
+  base = "asset-library"
+  publish = "public"
+  functions = "netlify/functions"
+
+[functions]
+  node_bundler = "esbuild"
+
+# Route API calls to the serverless function.
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/api/:splat"
+  status = 200
+
+# Serve the login page at the clean /login path.
+[[redirects]]
+  from = "/login"
+  to = "/login.html"
+  status = 200
