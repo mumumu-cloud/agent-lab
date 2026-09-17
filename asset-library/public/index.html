@@ -22,60 +22,58 @@
     <div class="app-shell">
       <!-- Sidebar -->
       <aside class="sidebar" id="sidebar">
-        <div class="sidebar__brand">
-          <img class="brand-logo brand-logo--light sidebar__logo" src="/img/UROCK_navy.svg" alt="UROCK" />
-          <img class="brand-logo brand-logo--dark sidebar__logo" src="/img/UROCK_white.svg" alt="UROCK" />
-          <span class="sidebar__brand-text">
-            <span class="sidebar__brand-title">Asset Library</span>
-            <span class="sidebar__brand-sub">사내 디자인 애셋</span>
-          </span>
-        </div>
-
-        <!-- Profile (moved from the top bar) -->
-        <div class="sidebar__profile">
-          <div class="sidebar__profile-user">
-            <span class="user-chip__avatar" id="user-avatar">–</span>
-            <div class="sidebar__profile-meta">
-              <span class="user-chip__name" id="user-name">사용자</span>
-              <span class="role-badge" id="user-role">권한</span>
-            </div>
+        <div class="sidebar__top">
+          <div class="sidebar__brand">
+            <img class="brand-logo brand-logo--light sidebar__logo" src="/img/UROCK_navy.svg" alt="UROCK" />
+            <img class="brand-logo brand-logo--dark sidebar__logo" src="/img/UROCK_white.svg" alt="UROCK" />
+            <span class="sidebar__brand-text">
+              <span class="sidebar__brand-title">Asset Library</span>
+              <span class="sidebar__brand-sub">사내 디자인 애셋</span>
+            </span>
           </div>
-          <button class="button button--sm button--block" id="logout-btn">로그아웃</button>
+          <button class="icon-button" id="theme-toggle" aria-label="테마 전환" title="라이트/다크 전환">
+            <span id="theme-icon">🌙</span>
+          </button>
         </div>
 
-        <nav>
+        <!-- Profile: illustration above the name -->
+        <div class="sidebar__profile">
+          <span class="sidebar__avatar">
+            <img src="/img/profile.png" alt="프로필 일러스트" />
+          </span>
+          <div class="sidebar__profile-meta">
+            <span class="user-chip__name" id="user-name">사용자</span>
+            <span class="role-badge" id="user-role">권한</span>
+          </div>
+        </div>
+
+        <nav class="sidebar__nav">
           <p class="sidebar__section-title">카테고리</p>
           <ul class="category-list" id="category-list"></ul>
         </nav>
-      </aside>
 
-      <!-- Topbar -->
-      <header class="topbar">
-        <button class="topbar__menu-btn" id="menu-btn" aria-label="메뉴 열기">☰</button>
-        <div class="search">
-          <span class="search__icon" aria-hidden="true">🔍</span>
-          <input
-            class="search__input"
-            id="search-input"
-            type="search"
-            placeholder="프로젝트명 또는 파일명으로 검색"
-            aria-label="검색"
-          />
-        </div>
-        <div class="topbar__spacer"></div>
-        <button class="icon-button" id="theme-toggle" aria-label="테마 전환" title="라이트/다크 전환">
-          <span id="theme-icon">🌙</span>
-        </button>
-      </header>
+        <button class="button button--sm button--block sidebar__logout" id="logout-btn">로그아웃</button>
+      </aside>
 
       <!-- Main -->
       <main class="main">
         <div class="page-head">
-          <div>
+          <button class="page-head__menu" id="menu-btn" aria-label="메뉴 열기">☰</button>
+          <div class="page-head__titles">
             <h1 class="page-head__title">디자인 애셋 갤러리</h1>
             <p class="page-head__subtitle" id="page-subtitle">
               전체 작업물을 이미지 갤러리로 살펴보세요.
             </p>
+          </div>
+          <div class="search">
+            <span class="search__icon" aria-hidden="true">🔍</span>
+            <input
+              class="search__input"
+              id="search-input"
+              type="search"
+              placeholder="프로젝트명 또는 파일명으로 검색"
+              aria-label="검색"
+            />
           </div>
         </div>
 

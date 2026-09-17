@@ -464,7 +464,6 @@ function bootstrap() {
 
   el("user-name").textContent = state.me.name;
   el("user-role").textContent = `${permIcon(state.me.role)} ${state.me.permissions.label} 권한`;
-  el("user-avatar").textContent = state.me.name.slice(0, 1);
 
   const editCat = el("edit-category");
   editCat.replaceChildren();
