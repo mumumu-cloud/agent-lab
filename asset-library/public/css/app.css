@@ -347,6 +347,30 @@ button {
   color: var(--color-text-muted);
 }
 
+/* Sidebar profile (moved from the top bar) */
+.sidebar__profile {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-3);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface-2);
+}
+
+.sidebar__profile-user {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.sidebar__profile-meta {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.2;
+  min-width: 0;
+}
+
 .sidebar__section-title {
   font-size: var(--font-size-xs);
   text-transform: uppercase;
@@ -476,6 +500,12 @@ button {
 
 .card-panel__head .card-panel__title {
   margin: 0;
+}
+
+.card-panel__subtitle {
+  margin: -8px 0 var(--space-4);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
 }
 
 /* Segmented control (metric toggle) */
@@ -620,7 +650,7 @@ button {
 
 .summary {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
   gap: var(--space-2);
 }
 

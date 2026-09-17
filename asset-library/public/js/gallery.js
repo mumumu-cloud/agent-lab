@@ -290,6 +290,13 @@ function renderDonut() {
   }
 }
 
+// Icon per permission level (view / download / admin).
+function permIcon(role) {
+  if (role === "admin") return "🛡️";
+  if (role === "downloader") return "⬇️";
+  return "👁️";
+}
+
 function statsGrid(items) {
   const grid = document.createElement("div");
   grid.className = "summary";
@@ -305,6 +312,7 @@ function statsGrid(items) {
 function renderSummary() {
   const body = el("summary-body");
   const title = el("summary-title");
+  const subtitle = el("summary-subtitle");
   const back = el("summary-back");
   body.replaceChildren();
 
@@ -313,15 +321,21 @@ function renderSummary() {
 
   if (!state.selectedCategory) {
     // Overall summary
-    title.textContent = "요약";
+    title.textContent = "전체 요약";
+    subtitle.hidden = true;
+    subtitle.textContent = "";
     back.hidden = true;
     const topCat = real.slice().sort((a, b) => b.count - a.count)[0];
+    const role = state.me?.role;
     body.appendChild(
       statsGrid([
         { value: total, label: "전체 작업물" },
         { value: real.length, label: "카테고리 수" },
         { value: topCat ? topCat.label : "—", label: "최다 카테고리" },
-        { value: state.me?.permissions?.label || "—", label: "내 권한" },
+        {
+          value: `${permIcon(role)} ${state.me?.permissions?.label || "—"}`,
+          label: "내 권한",
+        },
       ]),
     );
     const hint = document.createElement("p");
@@ -337,7 +351,10 @@ function renderSummary() {
   const pct = total ? Math.round((files.length / total) * 100) : 0;
   const totalBytes = files.reduce((s, f) => s + f.sizeBytes, 0);
 
-  title.textContent = `요약 · ${cat ? cat.label : ""}`;
+  // Title = "<list name> 요약"; description shown under the title.
+  title.textContent = `${cat ? cat.label : ""} 요약`;
+  subtitle.textContent = cat ? cat.description : "";
+  subtitle.hidden = !cat;
   back.hidden = false;
 
   body.appendChild(
@@ -345,7 +362,6 @@ function renderSummary() {
       { value: `${files.length}건`, label: "작업물 수" },
       { value: `${pct}%`, label: "전체 대비 비율" },
       { value: formatSize(totalBytes), label: "총 용량" },
-      { value: cat ? cat.description : "—", label: "설명" },
     ]),
   );
 
@@ -447,7 +463,7 @@ function bootstrap() {
   state.colors = CATEGORY_COLORS;
 
   el("user-name").textContent = state.me.name;
-  el("user-role").textContent = state.me.permissions.label + " 권한";
+  el("user-role").textContent = `${permIcon(state.me.role)} ${state.me.permissions.label} 권한`;
   el("user-avatar").textContent = state.me.name.slice(0, 1);
 
   const editCat = el("edit-category");
