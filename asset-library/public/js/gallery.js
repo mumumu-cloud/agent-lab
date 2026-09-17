@@ -15,6 +15,7 @@ const state = {
   colors: {},
   assets: [],
   donutMetric: "count", // "count" (N건) or "percent" (X%)
+  selectedCategory: null, // clicked donut category shown in the summary panel
 };
 
 // Client-side prototype edits (admin). Sample data is embedded; edits/deletes
@@ -228,6 +229,7 @@ function renderDonut() {
       setActive(null);
       hideTooltip();
     });
+    hit.addEventListener("click", () => selectCategory(c.id));
     hitAreas.push(hit);
 
     offset -= pct;
@@ -248,6 +250,8 @@ function renderDonut() {
   for (const c of real) {
     const li = document.createElement("li");
     li.className = "donut__legend-item";
+    li.dataset.cat = c.id;
+    if (c.id === state.selectedCategory) li.classList.add("is-selected");
     const pct = total ? Math.round((c.count / total) * 100) : 0;
     const metricText = state.donutMetric === "percent" ? `${pct}%` : `${c.count}건`;
     li.innerHTML =
@@ -262,6 +266,7 @@ function renderDonut() {
       setActive(null);
       hideTooltip();
     });
+    li.addEventListener("click", () => selectCategory(c.id));
     legend.appendChild(li);
     liByCat[c.id] = li;
   }
@@ -285,24 +290,90 @@ function renderDonut() {
   }
 }
 
-function renderSummary() {
-  const real = state.categories.filter((c) => c.id !== "ALL");
-  const total = state.categories.find((c) => c.id === "ALL")?.count || 0;
-  const topCat = real.slice().sort((a, b) => b.count - a.count)[0];
-  const items = [
-    { value: total, label: "전체 작업물" },
-    { value: real.length, label: "카테고리 수" },
-    { value: topCat ? topCat.label : "—", label: "최다 카테고리" },
-    { value: state.me?.permissions?.label || "—", label: "내 권한" },
-  ];
-  const box = el("summary");
-  box.replaceChildren();
+function statsGrid(items) {
+  const grid = document.createElement("div");
+  grid.className = "summary";
   for (const it of items) {
     const div = document.createElement("div");
     div.className = "summary__item";
     div.innerHTML = `<div class="summary__value">${escapeHtml(String(it.value))}</div><div class="summary__label">${escapeHtml(it.label)}</div>`;
-    box.appendChild(div);
+    grid.appendChild(div);
   }
+  return grid;
+}
+
+function renderSummary() {
+  const body = el("summary-body");
+  const title = el("summary-title");
+  const back = el("summary-back");
+  body.replaceChildren();
+
+  const real = state.categories.filter((c) => c.id !== "ALL");
+  const total = state.categories.find((c) => c.id === "ALL")?.count || 0;
+
+  if (!state.selectedCategory) {
+    // Overall summary
+    title.textContent = "요약";
+    back.hidden = true;
+    const topCat = real.slice().sort((a, b) => b.count - a.count)[0];
+    body.appendChild(
+      statsGrid([
+        { value: total, label: "전체 작업물" },
+        { value: real.length, label: "카테고리 수" },
+        { value: topCat ? topCat.label : "—", label: "최다 카테고리" },
+        { value: state.me?.permissions?.label || "—", label: "내 권한" },
+      ]),
+    );
+    const hint = document.createElement("p");
+    hint.className = "summary__hint";
+    hint.textContent = "왼쪽 그래프의 카테고리를 클릭하면 관련 파일을 볼 수 있어요.";
+    body.appendChild(hint);
+    return;
+  }
+
+  // Category detail
+  const cat = state.categories.find((c) => c.id === state.selectedCategory);
+  const files = queryAssets({ category: state.selectedCategory, sort: "date", order: "desc" });
+  const pct = total ? Math.round((files.length / total) * 100) : 0;
+  const totalBytes = files.reduce((s, f) => s + f.sizeBytes, 0);
+
+  title.textContent = `요약 · ${cat ? cat.label : ""}`;
+  back.hidden = false;
+
+  body.appendChild(
+    statsGrid([
+      { value: `${files.length}건`, label: "작업물 수" },
+      { value: `${pct}%`, label: "전체 대비 비율" },
+      { value: formatSize(totalBytes), label: "총 용량" },
+      { value: cat ? cat.description : "—", label: "설명" },
+    ]),
+  );
+
+  const listTitle = document.createElement("div");
+  listTitle.className = "summary-detail__section-title";
+  listTitle.textContent = `관련 파일 (${files.length})`;
+  body.appendChild(listTitle);
+
+  const list = document.createElement("ul");
+  list.className = "file-list";
+  for (const f of files) {
+    const li = document.createElement("li");
+    li.className = "file-list__item";
+    li.innerHTML =
+      `<span class="file-list__badge" style="background:${catColor(f.category)}">${escapeHtml(extOf(f.fileName))}</span>` +
+      `<span class="file-list__name">${escapeHtml(f.fileName)}</span>` +
+      `<span class="file-list__size">${formatSize(f.sizeBytes)}</span>`;
+    list.appendChild(li);
+  }
+  body.appendChild(list);
+}
+
+function selectCategory(id) {
+  state.selectedCategory = id;
+  renderSummary();
+  document.querySelectorAll("#donut-legend .donut__legend-item").forEach((li) => {
+    li.classList.toggle("is-selected", li.dataset.cat === id);
+  });
 }
 
 function renderAssets() {
@@ -411,6 +482,15 @@ el("sort-select").addEventListener("change", (e) => {
 el("order-select").addEventListener("change", (e) => {
   state.order = e.target.value;
   loadAssets();
+});
+
+// Summary "back to overall" button
+el("summary-back").addEventListener("click", () => {
+  state.selectedCategory = null;
+  renderSummary();
+  document
+    .querySelectorAll("#donut-legend .donut__legend-item")
+    .forEach((li) => li.classList.remove("is-selected"));
 });
 
 // Donut legend metric toggle (갯수 / %)
