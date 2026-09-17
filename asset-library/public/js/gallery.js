@@ -369,10 +369,12 @@ function renderSummary() {
 }
 
 function selectCategory(id) {
-  state.selectedCategory = id;
+  // Toggle: clicking the already-selected category deselects it and resets the
+  // summary panel back to the overall view.
+  state.selectedCategory = state.selectedCategory === id ? null : id;
   renderSummary();
   document.querySelectorAll("#donut-legend .donut__legend-item").forEach((li) => {
-    li.classList.toggle("is-selected", li.dataset.cat === id);
+    li.classList.toggle("is-selected", li.dataset.cat === state.selectedCategory);
   });
 }
 
